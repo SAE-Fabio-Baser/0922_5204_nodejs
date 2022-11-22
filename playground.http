@@ -19,3 +19,43 @@ Content-Type: application/json
 
 ### DELETE
 DELETE http://localhost:3000/api/users/ffff
+
+### GET ALL POSTS
+GET http://localhost:3000/api/posts?page=1&pageSize=2
+
+### GET SPECIFIC POST
+GET http://localhost:3000/api/posts/wurst
+
+### DELETE SPECIFIC POST
+DELETE http://localhost:3000/api/posts/moin-in-hamburg
+
+### CREATE POST
+POST http://localhost:3000/api/posts/create
+Content-Type: application/json
+
+{
+  "title": "moin in hamburg",
+  "slug": "moin-in-hamburg",
+  "content": [
+    {
+      "type": "h1",
+      "content": "in hamburg sagt man moin"
+    }
+  ],
+  "author": "1234"
+}
+
+### UPDATE POST
+PUT http://localhost:3000/api/posts/wurst
+Content-Type: application/json
+
+{
+  "title": "moin aus hamburg",
+  "slug": "wurst2",
+  "content": [
+    {
+      "type": "h1",
+      "content": "in hamburg sagt man moin"
+    }
+  ]
+}
