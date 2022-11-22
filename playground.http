@@ -1,0 +1,21 @@
+### CREATE
+POST http://127.0.0.1:3000/api/users/create
+Content-Type: application/json
+
+{
+  "username": "ffff"
+}
+
+### READ
+GET http://localhost:3000/api/users
+
+### UPDATE
+PUT http://localhost:3000/api/users/ffff
+Content-Type: application/json
+
+{
+  "email": "akljiowef.yahoo.de"
+}
+
+### DELETE
+DELETE http://localhost:3000/api/users/ffff
