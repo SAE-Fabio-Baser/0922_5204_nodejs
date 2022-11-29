@@ -16,6 +16,7 @@ function onMongoConnect(mongoClient) {
 
   userRoutes(app, { users })
   postRoutes(app, { posts })
+  authRoutes(app, { users })
 }
 
 const credentials = { username: 'mongo', password: 'mongo' }

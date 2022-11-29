@@ -2,6 +2,7 @@
   "name": "sae-express",
   "version": "0.0.1",
   "dependencies": {
+    "cryptojs": "^2.5.3",
     "express": "^4.18.2",
     "jsonwebtoken": "^8.5.1",
     "mongodb": "^4.12.0",

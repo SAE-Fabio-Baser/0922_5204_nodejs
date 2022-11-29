@@ -1,27 +1,63 @@
+const { Crypto } = require("cryptojs")
+const { generate } = require("../auth")
+
 module.exports = function authRoutes(app, { users }) {
 
-  app.post("/auth/register", (req, res) => {
+  app.post("/auth/register", async (req, res) => {
 
     const { email, password } = req.body
 
     // Check if user already exists
+    const foundUser = await users.findOne({ email })
 
-    // Add user to DB
+    if (foundUser) {
+      res.send({
+        success: false,
+        error: "emailAlreadyInUse"
+      })
+      return
+    }
 
-    // Generate and return token
+    const hashedPassword = Crypto.SHA1(password)
+    await users.insertOne({ email, password: hashedPassword })
 
-    res.sendStatus(500)
+    res.send({
+      success: true,
+      data: {
+        token: generate({ email })
+      }
+    })
   })
 
-  app.post("/auth/login", (req, res) => {
+  app.post("/auth/login", async (req, res) => {
 
     const { email, password } = req.body
 
-    // Check if user exists
+    const foundUser = await users.findOne({ email })
 
-    // Check if encrypted password is in db
+    if (!foundUser) {
+      res.send({
+        success: false,
+        error: "noUserWithEmail"
+      })
+      return
+    }
 
-    // Generate Token
-    res.sendStatus(500)
+    const hashedPassword = Crypto.SHA1(password)
+    const correctPassword = foundUser.password === hashedPassword
+
+    if (correctPassword) {
+      res.send({
+        success: true,
+        data: {
+          token: generate({ email })
+        }
+      })
+    } else {
+      res.send({
+        success: false,
+        error: "wrongCredentials"
+      })
+    }
   })
 }
