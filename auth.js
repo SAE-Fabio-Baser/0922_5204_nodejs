@@ -21,7 +21,27 @@ function verify(token) {
   }
 }
 
+function protectedRoute(req, res, next) {
+
+  const { authorization = "" } = req.headers
+  if (authorization.length === 0) {
+    res.sendStatus(401)
+    return
+  }
+  const token = authorization.replace("Bearer ", "")
+
+  const decodedToken = verify(token)
+
+  if (decodedToken.valid) {
+    req.decodedToken = decodedToken
+    next()
+  } else {
+    res.sendStatus(403)
+  }
+}
+
 module.exports = {
   generate,
-  verify
+  verify,
+  protectedRoute
 }

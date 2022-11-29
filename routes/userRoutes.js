@@ -1,6 +1,9 @@
+
+const { protectedRoute } = require("../auth")
+
 function usersRoutes(app, { users }) {
   // Create
-  app.post('/api/users/create', async (req, res) => {
+  app.post('/api/users/create', protectedRoute, async (req, res) => {
     const { username, email = '' } = req.body
 
     if (!username) {
@@ -17,14 +20,14 @@ function usersRoutes(app, { users }) {
   })
 
   // Read
-  app.get('/api/users', async (req, res) => {
+  app.get('/api/users', protectedRoute, async (req, res) => {
     const allUsers = await users.find().toArray()
 
     res.send(allUsers)
   })
 
   // Update
-  app.put('/api/users/:username', async (req, res) => {
+  app.put('/api/users/:username', protectedRoute, async (req, res) => {
     const { username } = req.params
     const { email } = req.body
 
@@ -43,7 +46,7 @@ function usersRoutes(app, { users }) {
   })
 
   // Delete
-  app.delete('/api/users/:username', async (req, res) => {
+  app.delete('/api/users/:username', protectedRoute, async (req, res) => {
     const { username } = req.params
 
     const foundUser = await users.findOne({ username })
