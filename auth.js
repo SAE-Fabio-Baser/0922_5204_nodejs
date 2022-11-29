@@ -3,9 +3,12 @@ const jwt = require('jsonwebtoken')
 const SECRET = "password1234"
 
 function generate(data) {
+
+  const iat = Date.now() / 1000
   const payload = {
     data,
-    iat: Date.now() / 1000
+    iat,
+    exp: iat + 60 // set expiration date to 60seconds in the future
   }
 
   return jwt.sign(payload, SECRET, { algorithm: 'HS256' })
