@@ -1,4 +1,5 @@
 const express = require('express')
+const cors = require("cors")
 const { MongoClient } = require('mongodb')
 
 const userRoutes = require('./routes/userRoutes')
@@ -7,12 +8,28 @@ const authRoutes = require('./routes/authRoutes')
 
 const app = express()
 app.use(express.json())
+app.use(cors())
 
-function onMongoConnect(mongoClient) {
+async function onMongoConnect(mongoClient) {
   const db = mongoClient.db('saeApp')
 
   const users = db.collection('users')
   const posts = db.collection('posts')
+
+  // const cursor = await posts
+  //   .aggregate([
+  //     {
+  //       $lookup: {
+  //         from: 'users',
+  //         localField: 'author',
+  //         foreignField: 'username',
+  //         as: 'author',
+  //       },
+  //     },
+  //   ])
+  //   .toArray()
+  //
+  // console.log(cursor)
 
   userRoutes(app, { users })
   postRoutes(app, { posts })

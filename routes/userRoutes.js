@@ -1,65 +1,64 @@
-
-const { protectedRoute } = require("../auth")
+const { withRole } = require('../auth')
 
 function usersRoutes(app, { users }) {
-  // Create
-  app.post('/api/users/create', protectedRoute, async (req, res) => {
-    const { username, email = '' } = req.body
+    // Create
+    app.post('/api/users/create', withRole(2), async (req, res) => {
+        const { username, email = '' } = req.body
 
-    if (!username) {
-      res.sendStatus(400)
-      return
-    }
+        if (!username) {
+            res.sendStatus(400)
+            return
+        }
 
-    const createdUser = await users.insertOne({
-      username,
-      email,
+        const createdUser = await users.insertOne({
+            username,
+            email,
+        })
+
+        res.send(createdUser)
     })
 
-    res.send(createdUser)
-  })
+    // Read
+    app.get('/api/users', withRole(2), async (req, res) => {
+        const allUsers = await users.find().toArray()
 
-  // Read
-  app.get('/api/users', protectedRoute, async (req, res) => {
-    const allUsers = await users.find().toArray()
+        res.send(allUsers)
+    })
 
-    res.send(allUsers)
-  })
+    // Update
+    app.put('/api/users/:username', withRole(2), async (req, res) => {
+        const { username } = req.params
+        const { email } = req.body
 
-  // Update
-  app.put('/api/users/:username', protectedRoute, async (req, res) => {
-    const { username } = req.params
-    const { email } = req.body
+        const foundUser = await users.findOne({ username })
 
-    const foundUser = await users.findOne({ username })
+        if (!foundUser) {
+            res.sendStatus(404)
+            return
+        }
 
-    if (!foundUser) {
-      res.sendStatus(404)
-      return
-    }
+        const updateResult = await users
+            .updateOne({ username }, { $set: { email } })
+            .catch(console.error)
 
-    const updateResult = await users
-      .updateOne({ username }, { $set: { email } })
-      .catch(console.error)
+        res.send(updateResult)
+    })
 
-    res.send(updateResult)
-  })
+    // Delete
+    app.delete('/api/users/:username', withRole(2), async (req, res) => {
+        const { username } = req.params
 
-  // Delete
-  app.delete('/api/users/:username', protectedRoute, async (req, res) => {
-    const { username } = req.params
+        const foundUser = await users.findOne({ username })
 
-    const foundUser = await users.findOne({ username })
+        if (!foundUser) {
+            res.sendStatus(404)
+            return
+        }
 
-    if (!foundUser) {
-      res.sendStatus(404)
-      return
-    }
+        const deleteResult = users.deleteOne({ username })
 
-    const deleteResult = users.deleteOne({ username })
-
-    res.send(deleteResult)
-  })
+        res.send(deleteResult)
+    })
 }
 
 module.exports = usersRoutes
